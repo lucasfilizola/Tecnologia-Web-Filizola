@@ -1,4 +1,6 @@
-from utils import load_data, load_template
+from utils import load_data, load_template, add_annotation_to_notes, build_response, extract_route, read_file
+from urllib.parse import unquote_plus
+
 
 def index(request):
     
@@ -17,6 +19,12 @@ def index(request):
         # requisição e devolve os parâmetros para desacoplar esta lógica.
         # Dica: use o método split da string e a função unquote_plus
         for chave_valor in corpo.split('&'):
+            chave, valor = chave_valor.split('=')
+            params[chave] = unquote_plus(valor)
+        titulo = params.get('titulo', '')
+        detalhes = params.get('detalhes', '')
+        add_annotation_to_notes(titulo, detalhes)  # Adiciona a nova anotação ao arquivo notes.json
+        return build_response(code=303, reason='See Other', headers='Location: /')
             
 
 
